@@ -27,6 +27,17 @@
                 box-sizing: border-box;
                 border-radius: 5px;
                 cursor: pointer;
+                position: relative;
+            }
+
+            .item-box .box-content .back-drop {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(32, 50, 62, 0.3);
+                top: 0;
+                left: 0;
+                color: #3ab4d4;
             }
 
             .item-box .box-content .item-icon {
@@ -49,14 +60,23 @@
         </style>
 
         <div class="item-box">
-            <div class="box-content">
+            <div class="box-content" on-click="itemClicked">
                 <div class="flex flex--col flex--justify flex--middle" style="height: 100%;">
                     <div class="item-icon flex flex--col flex--center flex--middle">
-                        <px-icon icon='px-doc:document-pdf'>
+                        <px-icon icon='px-doc:document'>
                         </px-icon>
                     </div>
-                    <div class="item-title">File name</div>
+                    <div class="item-title">{{file.name}}</div>
                 </div>
+
+                <template is="dom-if" if="{{selected}}">
+                    <div class="back-drop">
+                        <div class="flex flex--row flex--right flex--top u-pt u-pr">
+                            <px-icon icon="px-nav:confirmed"></px-icon>
+                        </div>
+                    </div>
+                </template>
+
             </div>
         </div>
     </template>
@@ -64,9 +84,19 @@
         Polymer({
             is: 'grid-item',
             properties: {
-                files: {
-                    type: Array
+                file: {
+                    type: Object
+                },
+
+                selected: {
+                    type: Boolean,
+                    value: false
                 }
+            },
+
+            itemClicked: function () {
+                this.set('selected', !this.selected);
+                this.fire('item-selected', {item: this.file, selected: this.selected});
             }
         });
     </script>

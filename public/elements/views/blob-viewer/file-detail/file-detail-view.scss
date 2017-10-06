@@ -1,0 +1,18 @@
+// Settings
+@import "px-colors-design/_settings.colors.scss";
+
+// Generic
+
+// Base
+@import 'px-flexbox-design/_base.flexbox.scss';
+@import "px-headings-design/_base.headings.scss";
+
+$inuit-enable-input--regular : true;
+@import 'px-forms-design/_base.forms.scss'; 
+
+
+// Trumps
+$inuit-enable-paddings : true;
+$inuit-enable-paddings--huge : true;
+@import "px-spacing-design/_trumps.spacing.scss";
+@import "px-widths-responsive-design/_trumps.widths-responsive.scss";

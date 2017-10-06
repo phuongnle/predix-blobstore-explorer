@@ -22,7 +22,7 @@
             
         </style>
         <px-data-table table-data='{{files}}'
-            language="en" filterable include-all-columns>
+            language="en" filterable include-all-columns selectable on-selected-rows-changed="selectedChange">
         </px-data-table>
     </template>
     <script>
@@ -31,82 +31,20 @@
             properties: {
                 files: {
                     type: Array
+                },
+
+                selectedFiles: {
+                    type: Array
                 }
             },
 
             observers: [],
 
-            _formatRmdDataForTable: function (rmdData) {
-                var rows = [],
-                    row, description, self = this;
-                rmdData.tableData.forEach(function (sensor) {
-                    row = {
-                        "tag": self._getMeterHtml(sensor),
-                        "alertStatus": self._getAlertHtml(sensor),
-                        "currentValue": (typeof sensor.currentValue === "number") ? parseFloat(
-                            sensor.currentValue).toFixed(3) : '',
-                        "unit": sensor.unit,
-                        "lastTagReading": moment(sensor.lastTagReading).format(
-                            'YYYY-MM-DD HH:mm:ss ZZ'),
-                        "thresholdMin": sensor.thresholdMin,
-                        "thresholdMax": sensor.thresholdMax,
-                        "deltaThreshold": self._getDeltaHtml(sensor)
-                    }
-                    rows.push(row);
-                });
-                this.showPagination = rows.length > 10;
-                this.seedTableData = rows;
-                this.headerText = "Asset Performance";
-            },
+            selectedChange: function(e){
+                var selected = e.detail.value.indexSplices;
+                if (!selected) return;
 
-            _getAlertHtml: function (row) {
-                var color = row.alertStatus ? 'red' : 'green';
-                var iconClass = row.alertStatus ? 'failure' : 'confirmed';
-                return '<div style="color:' + color + ';"><px-icon icon="px-utl:' + iconClass +
-                    '"></px-icon></div>';
-            },
-
-            _getDeltaHtml: function (row) {
-                var html,
-                    val = (typeof row.deltaThreshold === "number") ? row.deltaThreshold.toFixed(2) + '%' :
-                    '',
-                    divStyle = 'color: ' + row.deltaThresholdColor,
-                    iconClass = row.deltaThresholdLevel === 'HIGH' ? 'up' : 'down',
-                    html = '<div style="' + divStyle + '"><px-icon icon="px-nav:' + iconClass +
-                    '"></px-icon> ' + val + '</div>'
-                return html;
-            },
-
-            _getMeterHtml: function (row) {
-                var html = '<div class="style-scope aha-table">' + row.tag;
-                if (row.tag_isKpi) {
-                    html += ' <px-icon title="KPI" icon="px-doc:chart"></px-icon>'
-                }
-                if (row.tag_isPM) {
-                    html += ' <px-icon title="Predix Machine" icon="px-doc:image"></px-icon>'
-                }
-                html += '</div>';
-                return html;
-            },
-
-            _formatAssetDataForTable: function (anAsset) {
-                var sensor, row, rows = [],
-                    description;
-                var assetTags = anAsset.assetTag;
-                for (var property in assetTags) {
-                    if (assetTags.hasOwnProperty(property)) {
-                        sensor = assetTags[property]
-                        row = {
-                            "tag": sensor.tagUri,
-                            "thresholdMin": sensor.loAlarmThreshold,
-                            "thresholdMax": sensor.hiAlarmThreshold
-                        }
-                        rows.push(row);
-                    }
-                }
-                this.seedTableData = rows;
-                this.headerText = "Asset details";
-                this.showPagination = rows.length > 10;
+                this.fire('selected-files', {selected: selected[0].object.map((item) => {return this.files[item.row.dataIndex];})});
             }
 
         });

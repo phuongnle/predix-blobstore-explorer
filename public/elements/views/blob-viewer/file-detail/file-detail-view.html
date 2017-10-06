@@ -4,122 +4,49 @@
 <link rel="import" href="../../../../bower_components/px-card/px-card.html">
 <link rel="import" href="../../../../bower_components/px-icon-set/px-icon-set.html">
 <link rel="import" href="../../../../bower_components/px-icon-set/px-icon.html">
-<link rel="import" href="../../../../bower_components/px-theme/px-theme-styles.html">
+<link rel="import" href="file-detail-view-styles.html">
 
 <script src="../../../../bower_components/moment/min/moment.min.js"></script>
 
-<!-- over ride the app's dark theme, and use the light theme here. -->
-<link rel="import" href="../../../../bower_components/px-theme/px-theme-styles.html">
-
 <dom-module id="file-detail-view">
     <template>
-        <style include="px-theme-styles" is="custom-style">
+        <style include="file-detail-view-styles" is="custom-style">
             
         </style>
-        <px-card id="tableCard" header-text="Information" icon="px-fea:log" style="padding-bottom: 2rem; height: 100%;">
-            <h4>This is file detail.</h4>
+        <px-card header-text="Information" icon="px-fea:log" style="padding-bottom: 2rem; height: 100%;">
+            <template is="dom-if" if="{{_checkSelectedLength(selectedFiles, '==1')}}">
+                <label for="input1" >File Name</label>
+                <div>{{selectedFiles.0.name}}</div>
+                <br/>
+
+                <label for="input1" >Extension</label>
+                <div>{{selectedFiles.0.extension}}</div>
+                <br/>
+
+                <label for="input1" >File Size</label>
+                <div>{{selectedFiles.0.size}}</div>
+                <br/>
+            </template>
+
+            <template is="dom-if" if="{{_checkSelectedLength(selectedFiles, '>1')}}">
+                <span class="value">Multiple file selected.</span>
+            </template>
         </px-card>
     </template>
     <script>
         Polymer({
             is: 'file-detail-view',
             properties: {
-                assetData: {
-                    type: Object,
-                    observer: '_formatAssetDataForTable'
-                },
-                rmdData: {
-                    type: Object,
-                    observer: '_formatRmdDataForTable'
-                },
-                seedTableData: {
-                    type: Object
-                },
-                headerText: {
-                    type: String
-                },
-                showPagination: {
-                    type: Boolean,
-                    value: false
-                },
-                showAssetOnly: {
-                    type: Boolean,
-                    value: false
+                selectedFiles: {
+                    type: Array
                 }
             },
 
-            _formatRmdDataForTable: function (rmdData) {
-                var rows = [],
-                    row, description, self = this;
-                rmdData.tableData.forEach(function (sensor) {
-                    row = {
-                        "tag": self._getMeterHtml(sensor),
-                        "alertStatus": self._getAlertHtml(sensor),
-                        "currentValue": (typeof sensor.currentValue === "number") ? parseFloat(
-                            sensor.currentValue).toFixed(3) : '',
-                        "unit": sensor.unit,
-                        "lastTagReading": moment(sensor.lastTagReading).format(
-                            'YYYY-MM-DD HH:mm:ss ZZ'),
-                        "thresholdMin": sensor.thresholdMin,
-                        "thresholdMax": sensor.thresholdMax,
-                        "deltaThreshold": self._getDeltaHtml(sensor)
-                    }
-                    rows.push(row);
-                });
-                this.showPagination = rows.length > 10;
-                this.seedTableData = rows;
-                this.headerText = "Asset Performance";
+            _checkSelectedLength: function (selectedFiles, condition) {
+                var expression = `${selectedFiles.length}${condition}`;
+                debugger
+                return eval(expression);
             },
-
-            _getAlertHtml: function (row) {
-                var color = row.alertStatus ? 'red' : 'green';
-                var iconClass = row.alertStatus ? 'failure' : 'confirmed';
-                return '<div style="color:' + color + ';"><px-icon icon="px-utl:' + iconClass +
-                    '"></px-icon></div>';
-            },
-
-            _getDeltaHtml: function (row) {
-                var html,
-                    val = (typeof row.deltaThreshold === "number") ? row.deltaThreshold.toFixed(2) + '%' :
-                    '',
-                    divStyle = 'color: ' + row.deltaThresholdColor,
-                    iconClass = row.deltaThresholdLevel === 'HIGH' ? 'up' : 'down',
-                    html = '<div style="' + divStyle + '"><px-icon icon="px-nav:' + iconClass +
-                    '"></px-icon> ' + val + '</div>'
-                return html;
-            },
-
-            _getMeterHtml: function (row) {
-                var html = '<div class="style-scope aha-table">' + row.tag;
-                if (row.tag_isKpi) {
-                    html += ' <px-icon title="KPI" icon="px-doc:chart"></px-icon>'
-                }
-                if (row.tag_isPM) {
-                    html += ' <px-icon title="Predix Machine" icon="px-doc:image"></px-icon>'
-                }
-                html += '</div>';
-                return html;
-            },
-
-            _formatAssetDataForTable: function (anAsset) {
-                var sensor, row, rows = [],
-                    description;
-                var assetTags = anAsset.assetTag;
-                for (var property in assetTags) {
-                    if (assetTags.hasOwnProperty(property)) {
-                        sensor = assetTags[property]
-                        row = {
-                            "tag": sensor.tagUri,
-                            "thresholdMin": sensor.loAlarmThreshold,
-                            "thresholdMax": sensor.hiAlarmThreshold
-                        }
-                        rows.push(row);
-                    }
-                }
-                this.seedTableData = rows;
-                this.headerText = "Asset details";
-                this.showPagination = rows.length > 10;
-            }
 
         });
     </script>

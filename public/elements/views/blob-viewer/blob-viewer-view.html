@@ -46,7 +46,7 @@
             <div class="u-3/4-desk u-1/1-palm">
                 <px-card id="files-card" header-text="Store 1" icon="px-fea:log" style="padding-bottom: 2rem">
                     <div class='actions'>
-                        <px-icon class="action-btn u-pl" icon='px-utl:px-utl:zoom'>
+                        <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:zoom'>
                         </px-icon>
                         <px-icon class="action-btn u-pl" icon='px-utl:download'>
                         </px-icon>
@@ -57,11 +57,11 @@
                     </div>
                     <div style="max-height: calc(100vh - 190px); overflow-y: auto;">
                         <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'list')}}">
-                            <list-files-view files="{{files}}"></list-files-view>
+                            <list-files-view files="{{files}}" on-selected-files="_selectedFileChanged"></list-files-view>
                         </template>
 
                         <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'grid')}}">
-                            <grid-files-view></grid-files-view>
+                            <grid-files-view files="{{files}}" on-selected-files="_selectedFileChanged"></grid-files-view>
                         </template>
                     </div>
                 </px-card>
@@ -69,7 +69,7 @@
             </div>
             <div style="border-right: 1px solid;"></div>
             <div class="u-1/4-desk u-1/1-palm">
-                <file-detail-view></file-detail-view>
+                <file-detail-view selected-files="{{_selectedFiles}}"></file-detail-view>
             </div>
         </div>
     </template>
@@ -79,6 +79,11 @@
             properties: {
                 files: {
                     type: Array
+                },
+
+                _selectedFiles: {
+                    type: Array,
+                    value: []
                 },
 
                 _viewModes: {
@@ -116,6 +121,10 @@
 
             _displayViewMode: function (activeViewMode, viewMode) {
                 return activeViewMode === viewMode;
+            },
+
+            _selectedFileChanged: function(e){
+                this.set('_selectedFiles', e.detail.selected);
             }
         });
     </script>

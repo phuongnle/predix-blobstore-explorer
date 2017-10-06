@@ -16,17 +16,11 @@
         </style>
 
         <div class="flex flex--wrap flex--row flex--left  flex--top">
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
-            <div class="box u-1/4"><grid-item></grid-item></div>
+            <template is="dom-repeat" items="{{files}}">
+                    <div class="box u-1/4">
+                        <grid-item file="{{item}}" on-item-selected="itemSelectedChange"></grid-item>
+                    </div>
+            </template>
         </div>
     </template>
     <script>
@@ -35,7 +29,23 @@
             properties: {
                 files: {
                     type: Array
+                },
+
+                selectedFiles: {
+                    type: Array,
+                    value: function() {return [];}
                 }
+            },
+            
+            itemSelectedChange: function(e) {
+                if (e.detail.selected) {
+                    this.selectedFiles.push(e.detail.item);
+                    // this.push('selectedFiles', e.detail.item);
+                } else {
+                    this.set('selectedFiles', this.selectedFiles.filter((item) => {return item.name !== e.detail.item.name}));
+                }
+
+                this.fire('selected-files', {selected: this.selectedFiles});
             }
         });
     </script>
