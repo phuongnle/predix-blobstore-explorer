@@ -1,0 +1,73 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/px-data-table/px-data-table.html">
+<link rel="import" href="../../../../bower_components/px-data-table/px-data-table-column.html">
+<link rel="import" href="../../../../bower_components/px-card/px-card.html">
+<link rel="import" href="../../../../bower_components/px-icon-set/px-icon-set.html">
+<link rel="import" href="../../../../bower_components/px-icon-set/px-icon.html">
+<link rel="import" href="grid-item-styles.html">
+
+<script src="../../../../bower_components/moment/min/moment.min.js"></script>
+
+<dom-module id="grid-item">
+    <template>
+        <style include="grid-item-styles" is="custom-style">
+            .item-box {
+                padding: 16px;
+                height: 250px;
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            .item-box .box-content {
+                background-color: whitesmoke;
+                border: 1px solid #b8c3ca;
+                width: 100%;
+                height: 100%;
+                padding: 16px;
+                box-sizing: border-box;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .item-box .box-content .item-icon {
+                height: 165px;
+            }
+
+            .item-box .box-content .item-title {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                width: 100%;
+                text-align: center;
+            }
+
+            .item-box .box-content .item-icon px-icon {
+                --iron-icon-width: 60px;
+                --iron-icon-height: 60px;
+                /*color: #3ab4d4;*/
+            }
+        </style>
+
+        <div class="item-box">
+            <div class="box-content">
+                <div class="flex flex--col flex--justify flex--middle" style="height: 100%;">
+                    <div class="item-icon flex flex--col flex--center flex--middle">
+                        <px-icon icon='px-doc:document-pdf'>
+                        </px-icon>
+                    </div>
+                    <div class="item-title">File name</div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'grid-item',
+            properties: {
+                files: {
+                    type: Array
+                }
+            }
+        });
+    </script>
+</dom-module>

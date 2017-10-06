@@ -23,9 +23,13 @@
   <template>
 
     <!-- apply imported seed app style module -->
-    <style include="seed-app-styles"></style>
+    <style include="seed-app-styles">
+        :host {
+            /*--px-branding-bar-height: 55px;*/
+        }
+    </style>
 
-    <px-branding-bar application-title="[[appHeader]]"></px-branding-bar>
+    <!--<px-branding-bar application-title="[[appHeader]]"></px-branding-bar>-->
 
     <div class="viewport">
       <app-location
@@ -40,9 +44,10 @@
         nav-route="{{navRoute}}">
       </px-app-route>
 
-      <div class="flex flex--row flex--justify">
+      <!--<div class="flex flex--row flex--justify">
         <div class="u-3/4-desk u-1/1-palm">
           <px-app-nav
+            verticalh
             class="navbar"
             items="{{navItems}}"
             selected-route="{{navRoute}}">
@@ -53,7 +58,7 @@
             <px-login class="u-pr u-pt"></px-login>
           </div>
         </div>
-      </div>
+      </div>-->
 
       <main role="main">
         <px-view id="view" element-href="{{getHref(navRoute)}}" active load-async></px-view>
@@ -90,8 +95,8 @@
           value: function() {
             return [
               {
-                "label": "Asset Monitoring",
-                "id": "rmd",
+                "label": "Blob Viewer",
+                "id": "blob-viewer",
                 "icon": "px-fea:analytics"
               },
               {
@@ -119,7 +124,7 @@
       ready: function(){
         if (!this.$.starterAppRoute.navRoute) {
           // set default route
-          this.$.starterAppRoute.navRoute = ['rmd'];
+          this.$.starterAppRoute.navRoute = ['blob-viewer'];
         }
         // console.log('ready. route: ', this.$.starterAppRoute.navRoute);
         this.$.configAjaxEl.addEventListener('response', function(evt) {
@@ -132,7 +137,8 @@
 
       getHref: function(navRoute) {
         var navRoute = this.$.starterAppRoute.navRoute || ['rmd'];
-        return '/elements/views/' + navRoute[0] + '-view.html';
+        // return '/elements/views/' + navRoute[0] + '-view.html';
+        return `/elements/views/${navRoute[0]}/${navRoute[0]}-view.html`;
       }
 
     });

@@ -1,0 +1,122 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/px-dropdown/px-dropdown.html">
+<link rel="import" href="./list-files/list-files-view.html">
+<link rel="import" href="./grid-files/grid-files-view.html">
+<link rel="import" href="./file-detail/file-detail-view.html">
+<link rel="import" href="blob-viewer-view-styles.html">
+<link rel="import" href="../../../../bower_components/px-theme/px-theme-styles.html">
+
+<dom-module id="blob-viewer-view">
+    <template>
+        <style include="px-theme-styles" is="theme-style"></style>
+        <style include="blob-viewer-view-styles">
+            .custom-icon {
+                --iron-icon-width: 26px;
+                --iron-icon-height: 26px;
+                cursor: pointer;
+            }
+
+            .action-btn {
+                --iron-icon-width: 22px;
+                --iron-icon-height: 22px;
+            }
+
+            .active-toggle {
+                color: #3ab4d4;
+            }
+        </style>
+
+        <iron-ajax url='/getFiles' last-response="{{files}}" auto></iron-ajax>
+
+        <div class="flex flex--row flex--justify flex--middle">
+            <div>
+                <h1 class="delta u-pl++">Blob Viewer</h1>
+            </div>
+            <div>
+                <div class="flex flex--row flex--right">
+                    <template is="dom-repeat" items="{{_viewModes}}">
+                        <px-icon class$="{{_viewModeToggleClass(_activeViewMode, item.type)}}" on-tap="_selectViewMode" icon="{{item.icon}}"></px-icon>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex--row flex--justify flex--stretch">
+            <div class="u-3/4-desk u-1/1-palm">
+                <px-card id="files-card" header-text="Store 1" icon="px-fea:log" style="padding-bottom: 2rem">
+                    <div class='actions'>
+                        <px-icon class="action-btn u-pl" icon='px-utl:px-utl:zoom'>
+                        </px-icon>
+                        <px-icon class="action-btn u-pl" icon='px-utl:download'>
+                        </px-icon>
+                        <px-icon class="action-btn u-pl" icon='px-utl:delete'>
+                        </px-icon>
+                        <px-icon class="action-btn u-pl" icon='px-utl:upload'>
+                        </px-icon>
+                    </div>
+                    <div style="max-height: calc(100vh - 190px); overflow-y: auto;">
+                        <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'list')}}">
+                            <list-files-view files="{{files}}"></list-files-view>
+                        </template>
+
+                        <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'grid')}}">
+                            <grid-files-view></grid-files-view>
+                        </template>
+                    </div>
+                </px-card>
+
+            </div>
+            <div style="border-right: 1px solid;"></div>
+            <div class="u-1/4-desk u-1/1-palm">
+                <file-detail-view></file-detail-view>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'blob-viewer-view',
+            properties: {
+                files: {
+                    type: Array
+                },
+
+                _viewModes: {
+                    type: Array,
+                    value: function () {
+                        return [{
+                                type: 'list',
+                                icon: 'px-nav:list-view'
+                            },
+                            {
+                                type: 'grid',
+                                icon: 'px-nav:grid-view'
+                            }
+                        ];
+                    }
+                },
+
+                _activeViewMode: {
+                    type: String,
+                    value: 'list'
+                }
+            },
+
+            observers: [],
+
+            ready: function () {},
+
+            _selectViewMode: function (e) {
+                this.set('_activeViewMode', e.model.item.type);
+            },
+
+            _viewModeToggleClass: function (activeViewMode, viewMode) {
+                return `custom-icon u-pr${activeViewMode ===  viewMode? ' active-toggle' : ''}`;
+            },
+
+            _displayViewMode: function (activeViewMode, viewMode) {
+                return activeViewMode === viewMode;
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,42 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/px-data-table/px-data-table.html">
+<link rel="import" href="../../../../bower_components/px-data-table/px-data-table-column.html">
+<link rel="import" href="../../../../bower_components/px-card/px-card.html">
+<link rel="import" href="../../../../bower_components/px-icon-set/px-icon-set.html">
+<link rel="import" href="../../../../bower_components/px-icon-set/px-icon.html">
+<link rel="import" href="grid-files-view-styles.html">
+<link rel="import" href="grid-item.html">
+
+<script src="../../../../bower_components/moment/min/moment.min.js"></script>
+
+<dom-module id="grid-files-view">
+    <template>
+        <style include="grid-files-view-styles" is="custom-style">
+            
+        </style>
+
+        <div class="flex flex--wrap flex--row flex--left  flex--top">
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+            <div class="box u-1/4"><grid-item></grid-item></div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'grid-files-view',
+            properties: {
+                files: {
+                    type: Array
+                }
+            }
+        });
+    </script>
+</dom-module>

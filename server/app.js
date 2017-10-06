@@ -194,6 +194,43 @@ app.get('/config', function(req, res) {
   res.send({wsUrl: config.websocketServerURL, appHeader: title});
 });
 
+app.get('/getFiles', function(req, res) {
+  let files = [
+      {
+          name: 'Picture 1',
+          modified: 1507195320855,
+          extension: 'JPG',
+          size: '9MB'
+      },
+      {
+          name: 'File 1',
+          modified: 1507195320855,
+          extension: 'BIN',
+          size: '90MB'
+      },
+      {
+          name: 'Document 123',
+          modified: 1507195320855,
+          extension: 'PDF',
+          size: '23MB'
+      },
+      {
+          name: 'Music song 123',
+          modified: 1507195320855,
+          extension: 'MP3',
+          size: '8MB'
+      },
+      {
+          name: 'Clip 2213',
+          modified: 1507195320855,
+          extension: 'AVI',
+          size: '8MB'
+      }
+  ];
+  
+  res.send(files);
+});
+
 // Sample route middleware to ensure user is authenticated.
 //   Use this route middleware on any resource that needs to be protected.  If
 //   the request is authenticated (typically via a persistent login session),

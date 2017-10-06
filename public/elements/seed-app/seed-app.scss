@@ -50,7 +50,7 @@ header > div.viewport {
 main {
   min-height: calc(100vh - #{calculateRem(120px)});
   // margin-left: calculateRem(60px);
-  background-color: var(--px-seed-app-main-content-area-background-color, $px-page-main-content-area-background-color);
+  background-color: #ebeff2;
   overflow-x: hidden;
   flex: 1;
 }
