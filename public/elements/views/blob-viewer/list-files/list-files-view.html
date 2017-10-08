@@ -21,7 +21,7 @@
         <style include="px-theme-styles" is="custom-style">
             
         </style>
-        <px-data-table table-data='{{files}}'
+        <px-data-table table-data='{{files}}' id="listFileTable"
             language="en" filterable include-all-columns selectable on-selected-rows-changed="selectedChange">
         </px-data-table>
     </template>
@@ -40,11 +40,20 @@
 
             observers: [],
 
+            refresh: function() {
+                this._resetSelection();
+            },
+
             selectedChange: function(e){
                 var selected = e.detail.value.indexSplices;
                 if (!selected) return;
 
                 this.fire('selected-files', {selected: selected[0].object.map((item) => {return this.files[item.row.dataIndex];})});
+            },
+
+            _resetSelection: function() {
+                this.$.listFileTable.singleSelect = true;
+                this.$.listFileTable.singleSelect = false;
             }
 
         });

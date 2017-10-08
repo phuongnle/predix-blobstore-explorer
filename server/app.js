@@ -197,30 +197,35 @@ app.get('/config', function(req, res) {
 app.get('/getFiles', function(req, res) {
   let files = [
       {
+        id: 'file1',
           name: 'Picture 1',
           modified: 1507195320855,
           extension: 'JPG',
           size: '9MB'
       },
       {
+        id: 'file2',
           name: 'File 1',
           modified: 1507195320855,
           extension: 'BIN',
           size: '90MB'
       },
       {
+        id: 'file3',
           name: 'Document 123',
           modified: 1507195320855,
           extension: 'PDF',
           size: '23MB'
       },
       {
+        id: 'file4',
           name: 'Music song 123',
           modified: 1507195320855,
           extension: 'MP3',
           size: '8MB'
       },
       {
+        id: 'file5',
           name: 'Clip 2213',
           modified: 1507195320855,
           extension: 'AVI',

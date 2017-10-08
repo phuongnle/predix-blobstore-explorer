@@ -10,6 +10,9 @@
 // Meta
 
 // Objects
+$inuit-enable-btn--call-to-action : true;
+@import 'px-buttons-design/_objects.buttons.scss';
+
 :host {
     background: $gray16;
 }

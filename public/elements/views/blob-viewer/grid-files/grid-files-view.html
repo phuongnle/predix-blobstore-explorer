@@ -18,7 +18,7 @@
         <div class="flex flex--wrap flex--row flex--left  flex--top">
             <template is="dom-repeat" items="{{files}}">
                     <div class="box u-1/4">
-                        <grid-item file="{{item}}" on-item-selected="itemSelectedChange"></grid-item>
+                        <grid-item file="{{item}}" id="{{item.id}}" on-item-selected="itemSelectedChange"></grid-item>
                     </div>
             </template>
         </div>
@@ -36,6 +36,10 @@
                     value: function() {return [];}
                 }
             },
+
+            refresh: function() {
+                this._resetSelection();
+            },
             
             itemSelectedChange: function(e) {
                 if (e.detail.selected) {
@@ -46,6 +50,12 @@
                 }
 
                 this.fire('selected-files', {selected: this.selectedFiles});
+            },
+
+            _resetSelection: function() {
+                this.files.forEach((file) => {
+                    this.$$(`#${file.id}`).selected = false;
+                });
             }
         });
     </script>

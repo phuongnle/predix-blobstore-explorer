@@ -35,6 +35,10 @@
             </div>
             <div>
                 <div class="flex flex--row flex--right">
+                    <button class="btn btn--call-to-action" style="margin: 0 32px;">
+                        <px-icon style="--iron-icon-height:16px" icon="px-utl:upload"></px-icon> Upload
+                    </button>
+
                     <template is="dom-repeat" items="{{_viewModes}}">
                         <px-icon class$="{{_viewModeToggleClass(_activeViewMode, item.type)}}" on-tap="_selectViewMode" icon="{{item.icon}}"></px-icon>
                     </template>
@@ -44,7 +48,7 @@
 
         <div class="flex flex--row flex--justify flex--stretch">
             <div class="u-3/4-desk u-1/1-palm">
-                <px-card id="files-card" header-text="Store 1" icon="px-fea:log" style="padding-bottom: 2rem">
+                <px-card id="files-card" header-text="Store 1" icon="px-obj:database" style="padding-bottom: 2rem">
                     <div class='actions'>
                         <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:zoom'>
                         </px-icon>
@@ -52,16 +56,14 @@
                         </px-icon>
                         <px-icon class="action-btn u-pl" icon='px-utl:delete'>
                         </px-icon>
-                        <px-icon class="action-btn u-pl" icon='px-utl:upload'>
-                        </px-icon>
                     </div>
                     <div style="max-height: calc(100vh - 190px); overflow-y: auto;">
                         <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'list')}}">
-                            <list-files-view files="{{files}}" on-selected-files="_selectedFileChanged"></list-files-view>
+                            <list-files-view id="listView" files="[[files]]" on-selected-files="_selectedFileChanged"></list-files-view>
                         </template>
 
                         <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'grid')}}">
-                            <grid-files-view files="{{files}}" on-selected-files="_selectedFileChanged"></grid-files-view>
+                            <grid-files-view id="gridView" files="[[files]]" on-selected-files="_selectedFileChanged"></grid-files-view>
                         </template>
                     </div>
                 </px-card>
@@ -107,12 +109,16 @@
                 }
             },
 
-            observers: [],
+            observers: ['test(_selectedFiles)'],
 
             ready: function () {},
 
             _selectViewMode: function (e) {
+                this.set('_selectedFiles', []);
+                
                 this.set('_activeViewMode', e.model.item.type);
+
+                this.$$(`#${e.model.item.type}View`) && this.$$(`#${e.model.item.type}View`).refresh();
             },
 
             _viewModeToggleClass: function (activeViewMode, viewMode) {
@@ -123,8 +129,13 @@
                 return activeViewMode === viewMode;
             },
 
-            _selectedFileChanged: function(e){
+            _selectedFileChanged: function (e) {
+                this.set('_selectedFiles', []);
                 this.set('_selectedFiles', e.detail.selected);
+            },
+
+            test: function() {
+                // console.log(this._selectedFiles);
             }
         });
     </script>
