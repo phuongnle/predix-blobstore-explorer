@@ -87,8 +87,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/docs', require('./routes/docs')(config));
 app.get('/api/blobstores', blobstoresRoute.get);
-app.get('/api/buckets/:bucketName/:fileName', bucketsRoute.download);
-app.post('/api/buckets/:bucketName/:fileName', multerUpload.single('file'), bucketsRoute.upload);
+app.get('/api/buckets/:bucketName/files', bucketsRoute.getObjects);
+app.get('/api/v2/buckets/:bucketName/files', bucketsRoute.getObjectsV2);
+app.get('/api/buckets/:bucketName/files/:fileName', bucketsRoute.download);
+app.post('/api/buckets/:bucketName/files/:fileName', multerUpload.single('file'), bucketsRoute.upload);
+app.delete('/api/buckets/:bucketName/files/:fileName', bucketsRoute.delete);
 
 if (!config.isUaaConfigured()) {
   // no restrictions

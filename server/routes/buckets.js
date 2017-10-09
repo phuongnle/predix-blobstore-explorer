@@ -18,16 +18,8 @@ function doUpload(req, res, client) {
         queueSize: 2
     }
 
-    client.upload(params, options, function (err, data) {
-        if (err) {
-            console.log(err);
-            res.status(err.statusCode).end();
-
-        } else {
-            console.log('>>>>>>>');
-            console.log(data);
-            res.status(200).end();
-        }
+    client.upload(params, options, (err, data) => {
+        handleResponse(req, res, err, data, genericResponse);
     });
 }
 
@@ -38,7 +30,7 @@ function doDownload(req, res, client) {
             Key: fileName
         };
 
-    client.headObject(params, function (err, data) {
+    client.headObject(params, (err, data) => {
         if (err) {
             console.log(err);
             res.status(err.statusCode || 500).end();
@@ -56,6 +48,40 @@ function doDownload(req, res, client) {
     });
 }
 
+function doDelete(req, res, client) {
+    var fileName = req.params.fileName,
+        params = {
+            Bucket: req.params.bucketName,
+            Key: fileName
+        };
+
+    client.deleteObject(params, (err, data) => {
+        handleResponse(req, res, err, data, genericResponse);
+    });
+}
+
+function doGetObjects(req, res, client) {
+    var params = {
+        Bucket: req.params.bucketName,
+        Delimiter: ''
+    };
+
+    client.listObjects(params, (err, data) => {
+        handleResponse(req, res, err, data, genericResponse);
+    });
+}
+
+function doGetObjectsV2(req, res, client) {
+    var params = {
+        Bucket: req.params.bucketName,
+        Delimiter: ''
+    };
+
+    client.listObjectsV2(params, (err, data) => {
+        handleResponse(req, res, err, data, genericResponse);
+    });
+}
+
 function execute(req, res, mainAction) {
 
     var client = blobstoreService.getClientByBucketName(req.params.bucketName);
@@ -65,9 +91,27 @@ function execute(req, res, mainAction) {
     }
 }
 
+function handleResponse(req, res, err, data, successfulAction) {
+    if (err) {
+        console.log(err, err.stack);
+        res.json(err).status(err.statusCode || 500).end();
+    } else {
+        successfulAction(res, data);
+    }
+}
+
+function genericResponse(res, data) {
+    console.log('------------');
+    console.log(data);
+    res.send(data).end();
+}
+
 module.exports = {
     download: function (req, res) { execute(req, res, doDownload); },
-    upload: function (req, res) { execute(req, res, doUpload); }
+    upload: function (req, res) { execute(req, res, doUpload); },
+    delete: function (req, res) { execute(req, res, doDelete); },
+    getObjects: function (req, res) { execute(req, res, doGetObjects); },
+    getObjectsV2: function (req, res) { execute(req, res, doGetObjectsV2); }
 };
 
 

@@ -8,13 +8,12 @@ function initialize() {
     if (node_env === 'development') {
         stores = require('../sample-data/predix-blobstore/stores.json')['predix-blobstore'];
     } else {
-        var vcapsServices = JSON.parse(process.env.VCAP_SERVICES)['predix-blobstore'];
+        stores = JSON.parse(process.env.VCAP_SERVICES)['predix-blobstore'];
     }
 
-    storesByBucketName = stores.reduce((a, b) => {
-        a[b.credentials.bucket_name] = b;
-        return a;
-    }, {});
+    stores.forEach(store => {
+        storesByBucketName[store.credentials.bucket_name] = store;
+    })
 }
 
 function getClient(bucketName) {
@@ -22,10 +21,12 @@ function getClient(bucketName) {
 
     if (!bucket) return null;
 
-    return new aws.S3({
-        accessKeyId: bucket.access_key_id,
-        secretAccessKey: bucket.secret_access_key,
-        endpoint: bucket.url,
+    console.log(bucket);
+
+    return new sdk.S3({
+        accessKeyId: bucket.credentials.access_key_id,
+        secretAccessKey: bucket.credentials.secret_access_key,
+        endpoint: bucket.credentials.host,
         signatureVersion: 'v4'
     });
 }
