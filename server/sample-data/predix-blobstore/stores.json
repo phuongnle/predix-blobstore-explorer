@@ -1,0 +1,44 @@
+{
+    "predix-blobstore": [
+        {
+            "credentials": {
+                "access_key_id": "00d140d0b842e6bffa6b",
+                "bucket_name": "bucket-79008bfd-ae65-4fd0-9411-95731c9ade03",
+                "host": "blobstore-azure-usw01.data-services.predix.io:443",
+                "secret_access_key": "iLa+Jx/q0zUwWpR/3v5SkfCLbyS/B/y2j3cwnW5X",
+                "url": "https://bucket-79008bfd-ae65-4fd0-9411-95731c9ade03.blobstore-azure-usw01.data-services.predix.io:443"
+            },
+            "label": "predix-blobstore",
+            "name": "predix-blobstore-azr",
+            "plan": "Tiered",
+            "provider": null,
+            "syslog_drain_url": null,
+            "tags": [
+                "blobstore",
+                "blob-store",
+                "blob store"
+            ],
+            "volume_mounts": []
+        },
+        {
+            "credentials": {
+                "access_key_id": "AKIAJYRNRIRMEILHGPHQ",
+                "bucket_name": "bucket-8fc5a126-507e-483e-acf1-230d8026c8f9",
+                "host": "s3-us-west-2.amazonaws.com",
+                "secret_access_key": "ueNB0QIMvBhFaBdOZ9myL2cimaOyWWx7BhNyKQGp",
+                "url": "https://bucket-8fc5a126-507e-483e-acf1-230d8026c8f9.s3-us-west-2.amazonaws.com"
+            },
+            "label": "predix-blobstore",
+            "name": "predix_blobstore_lab",
+            "plan": "Tiered",
+            "provider": null,
+            "syslog_drain_url": null,
+            "tags": [
+                "blobstore",
+                "blob-store",
+                "blob store"
+            ],
+            "volume_mounts": []
+        }
+    ]
+}

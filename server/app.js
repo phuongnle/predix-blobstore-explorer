@@ -21,6 +21,7 @@ var passportConfig = require('./passport-config');
 var userInfo = require('./routes/user-info');
 var app = express();
 var httpServer = http.createServer(app);
+var blobstores = require('./routes/blobstores');
 
 /**********************************************************************
        SETTING UP EXRESS SERVER
@@ -38,6 +39,8 @@ if (node_env === 'development') {
 } else {
   app.use(require('compression')()) // gzip compression
 }
+
+blobstores.initialize();
 
 // Session Storage Configuration:
 // *** Use this in-memory session store for development only. Use redis for prod. **
@@ -79,8 +82,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 *****************************************************************************/
 
 app.get('/docs', require('./routes/docs')(config));
+app.get('/api/blobstores', blobstores.get);
 
-if (!config.isUaaConfigured()) { 
+if (!config.isUaaConfigured()) {
   // no restrictions
   app.use(express.static(path.join(__dirname, process.env['base-dir'] ? process.env['base-dir'] : '../public')));
 
@@ -131,8 +135,8 @@ if (!config.isUaaConfigured()) {
   // }
 
   if (config.rmdDatasourceURL && config.rmdDatasourceURL.indexOf('https') === 0) {
-    app.get('/api/datagrid/*', 
-        proxy.addClientTokenMiddleware, 
+    app.get('/api/datagrid/*',
+        proxy.addClientTokenMiddleware,
         proxy.customProxyMiddleware('/api/datagrid', config.rmdDatasourceURL, '/services/experience/datasource/datagrid'));
   }
 
@@ -158,7 +162,7 @@ if (!config.isUaaConfigured()) {
 /*******************************************************
 SET UP MOCK API ROUTES
 *******************************************************/
-// NOTE: these routes are added after the real API routes. 
+// NOTE: these routes are added after the real API routes.
 //  So, if you have configured asset, the real asset API will be used, not the mock API.
 // Import route modules
 var mockAssetRoutes = require('./routes/mock-asset.js')();
@@ -232,7 +236,7 @@ app.get('/getFiles', function(req, res) {
           size: '8MB'
       }
   ];
-  
+
   res.send(files);
 });
 
