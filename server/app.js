@@ -21,7 +21,8 @@ var passportConfig = require('./passport-config');
 var userInfo = require('./routes/user-info');
 var app = express();
 var httpServer = http.createServer(app);
-var blobstores = require('./routes/blobstores');
+var blobstoresRoute = require('./routes/blobstores');
+var blobstoreService = require('./services/blobstore-service');
 
 /**********************************************************************
        SETTING UP EXRESS SERVER
@@ -40,7 +41,7 @@ if (node_env === 'development') {
   app.use(require('compression')()) // gzip compression
 }
 
-blobstores.initialize();
+blobstoreService.initialize();
 
 // Session Storage Configuration:
 // *** Use this in-memory session store for development only. Use redis for prod. **
@@ -82,7 +83,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 *****************************************************************************/
 
 app.get('/docs', require('./routes/docs')(config));
-app.get('/api/blobstores', blobstores.get);
+app.get('/api/blobstores', blobstoresRoute.get);
 
 if (!config.isUaaConfigured()) {
   // no restrictions
