@@ -21,7 +21,10 @@ var passportConfig = require('./passport-config');
 var userInfo = require('./routes/user-info');
 var app = express();
 var httpServer = http.createServer(app);
+var multer = require('multer');
+var multerUpload = multer({ storage: multer.memoryStorage() });
 var blobstoresRoute = require('./routes/blobstores');
+var bucketsRoute = require('./routes/buckets');
 var blobstoreService = require('./services/blobstore-service');
 
 /**********************************************************************
@@ -84,6 +87,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get('/docs', require('./routes/docs')(config));
 app.get('/api/blobstores', blobstoresRoute.get);
+app.get('/api/buckets/:bucketName/:fileName', bucketsRoute.download);
+app.post('/api/buckets/:bucketName/:fileName', multerUpload.single('file'), bucketsRoute.upload);
 
 if (!config.isUaaConfigured()) {
   // no restrictions

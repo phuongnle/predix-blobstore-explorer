@@ -1,5 +1,6 @@
 var stores = [],
-    storesByBucketName = {};
+    storesByBucketName = {},
+    sdk = require('aws-sdk');
 
 function initialize() {
     var node_env = process.env.node_env || 'development';
@@ -16,8 +17,23 @@ function initialize() {
     }, {});
 }
 
+function getClient(bucketName) {
+    var bucket = storesByBucketName[bucketName];
+
+    if (!bucket) return null;
+
+    return new aws.S3({
+        accessKeyId: bucket.access_key_id,
+        secretAccessKey: bucket.secret_access_key,
+        endpoint: bucket.url,
+        signatureVersion: 'v4'
+    });
+}
+
+
 module.exports = {
     initialize: initialize,
     getCurrentBoundBlobstores: function () { return stores; },
-    getBlobstoreByBucketName: function (bucketName) { return storesByBucketName[bucketName]; }
+    getBlobstoreByBucketName: function (bucketName) { return storesByBucketName[bucketName]; },
+    getClientByBucketName: function (bucketName) { return getClient(bucketName); }
 }
