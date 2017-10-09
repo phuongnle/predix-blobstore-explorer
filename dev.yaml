@@ -1,0 +1,11 @@
+applications:
+  - name: blobstore-viewer-dev
+    memory: 512M
+    services:
+      - predix_blobstore_lab
+      - predix_blobstore_drone_dev
+    buildpack: nodejs_buildpack
+    command: node server/app.js
+    path: build/es5-basic
+    env:
+      node_env: cloud
