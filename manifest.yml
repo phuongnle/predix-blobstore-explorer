@@ -5,7 +5,6 @@ applications:
     timeout: 180
     buildpack: nodejs_buildpack
     command: node server/app.js
-    path: build/es5-basic
 #services:
  # - your-name-uaa
  # - your-name-time-series

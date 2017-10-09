@@ -52,8 +52,8 @@
             <div class="upload-area flex flex--col flex--left flex--stretch">
 
                 <template is="dom-if" if="{{!uploadingMode}}">
-                    <px-dropdown style="margin: 0px 10px 16px;" id="storesDropdown" items="{{blobStores}}" selected="{{selectedBlob}}"
-                        sort-mode="key" button-style="default" display-value="Select blob store" disable-clear>
+                    <px-dropdown style="margin: 0px 10px 16px;" id="storesDropdown" items="{{blobStores}}" selected="{{selectedBlob}}" sort-mode="key"
+                        button-style="default" display-value="Select blob store" disable-clear>
                     </px-dropdown>
 
                     <px-file-upload id="fileUpload" multiple message="Drag and drop files here, or click the button below.">
@@ -69,7 +69,8 @@
                                 <div class="u-1/4 flex flex--row flex--center">
                                     <template is="dom-if" if="{{item.uploading}}">
                                         <px-spinner size="15">
-                                        </px-spinner><span style="margin-left: 6px;">Uploading...</span>
+                                        </px-spinner>
+                                        <span style="margin-left: 6px;">Uploading...</span>
                                     </template>
                                     <template is="dom-if" if="{{!item.uploading}}">
                                         <span style="margin-left: 6px;">Done</span>
@@ -83,7 +84,7 @@
             </div>
 
             <div class="action-bar flex flex--row flex--right">
-                <button on-click="_cancelUpload" class="btn btn--tertiary">Close</button>
+                <button on-click="_cancelUpload" disabled$="{{uploadingMode}}" class="btn btn--tertiary">Close</button>
                 <button on-click="_minimizeUpload" class="btn btn--call-to-action">Minimize</button>
                 <button on-click="_beginUpload" disabled$="{{uploadingMode}}" class="btn btn--primary">Upload</button>
             </div>
@@ -118,13 +119,25 @@
             },
 
             _minimizeUpload: function (e) {
-                this.fire('close');
+                this.fire('close', {
+                    isClose: true
+                });
             },
 
             _cancelUpload: function (e) {
+                if (this.uploadingMode) {
+                    this.selectedFiles.forEach((file) => {
+                        if (this.$$(`#${file.id}`).lastRequest) {
+                            this.$$(`#${file.id}`).lastRequest.xhr.abort();
+                        }
+                    });
+                }
+
                 this.$$('#fileUpload').files = [];
                 this.set('uploadingMode', false);
-                this.fire('close');
+                this.fire('close', {
+                    isClose: true
+                });
             },
 
             _beginUpload: function () {
@@ -143,7 +156,8 @@
                         formData.append('file', file);
                         var fileName = `${(new Date()).getTime()}-${file.name}`;
 
-                        var uploadUrl = `/api/buckets/${this.selectedBlob.bucketName}/files/${fileName}`;
+                        var uploadUrl =
+                            `/api/buckets/${this.selectedBlob.bucketName}/files/${fileName}`;
 
                         this.$$(`#${file.id}`).url = uploadUrl;
                         this.$$(`#${file.id}`).body = formData;

@@ -44,6 +44,7 @@
 
         <iron-ajax url='/api/blobstores' auto on-response="_handleBlobResponse"></iron-ajax>
         <iron-ajax id="getFileRequest" on-response="_handleFileResponse"></iron-ajax>
+        <iron-ajax id="deleteFileRequest" method="DELETE" on-response="_handleDeleteFileResponse"></iron-ajax>
 
         <!-- Header -->
         <div class="header flex flex--row flex--justify flex--middle">
@@ -68,8 +69,8 @@
         <div class="flex flex--row flex--justify flex--stretch">
             <div class="u-3/4-desk u-1/1-palm">
                 <div class="card-header flex flex--row flex--justify flex--middle">
-                    <px-dropdown id="storesDropdown" items="{{blobStores}}" selected="{{selectedBlobStore}}"
-                        sort-mode="key" button-style="default" display-value="Select blob store" disable-clear>
+                    <px-dropdown id="storesDropdown" items="{{blobStores}}" selected="{{selectedBlobStore}}" sort-mode="key" button-style="default"
+                        display-value="Select blob store" disable-clear>
                     </px-dropdown>
                     <div class='actions'>
                         <button class="btn btn--bare btn--icon">
@@ -78,7 +79,7 @@
                         <button class="btn btn--bare btn--icon" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="_downloadFile">
                             <px-icon class="action-btn u-pl" icon='px-utl:px-utl:download'></px-icon>
                         </button>
-                        <button class="btn btn--bare btn--icon" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="deleteFile">
+                        <button class="btn btn--bare btn--icon" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="_confirmDelete">
                             <px-icon class="action-btn u-pl" icon='px-utl:px-utl:delete'></px-icon>
                         </button>
                     </div>
@@ -107,6 +108,13 @@
         <px-modal id="uploadModal" modal-heading="Upload Files">
             <upload-file blob-stores="[[blobStores]]" selected-blob="[[selectedBlobStore]]" on-close="_toggleUploadModal" on-upload-submit=""></upload-file>
         </px-modal>
+
+        <px-modal id="confirmDeleteDialog" on-btn-modal-positive-clicked="_deleteFile" btn-modal-positive="Delete" btn-modal-negative="Cancel"
+            modal-heading="Are you sure?">
+            <p>Deleted file cannot be restore. Do you want to process?
+            </p>
+        </px-modal>
+
         <!-- End upload Modal -->
         <!-- End main view -->
 
@@ -155,7 +163,11 @@
 
             observers: ['_selectedBlobChange(selectedBlobStore)'],
 
-            ready: function () {},
+            ready: function () {
+                this.$.confirmDeleteDialog.addEventListener('btnModalPositiveClicked', function () {
+                    this._deleteFile();
+                }.bind(this));
+            },
 
             _selectViewMode: function (e) {
                 this.set('_selectedFiles', []);
@@ -178,18 +190,24 @@
                 this.set('_selectedFiles', e.detail.selected);
             },
 
-            _toggleUploadModal: function () {
+            _toggleUploadModal: function (e) {
+                if (e.detail.isClose) {
+                    this.$.getFileRequest.url = `/api/buckets/${this.selectedBlobStore.bucketName}/files`;
+                    this.$.getFileRequest.generateRequest();
+                }
+
                 this.$.uploadModal.modalButtonClicked();
+
             },
 
-            _selectedBlobChange: function(newVal, oldVal) {
+            _selectedBlobChange: function (newVal, oldVal) {
                 if (!newVal) return;
 
                 this.$.getFileRequest.url = `/api/buckets/${this.selectedBlobStore.bucketName}/files`;
                 this.$.getFileRequest.generateRequest();
             },
 
-            _handleBlobResponse: function(res) {
+            _handleBlobResponse: function (res) {
                 var stores = res.detail.response;
                 this.set('blobStores', stores.map((store) => {
                     return {
@@ -197,22 +215,55 @@
                         key: store
                     }
                 }));
+
+                this.set('selectedBlobStore', this.blobStores[0].key);
             },
 
-            _handleFileResponse: function(res) {
+            _handleFileResponse: function (res) {
                 var data = res.detail.response;
+                this.$$(`#${this._activeViewMode}View`) && this.$$(`#${this._activeViewMode}View`).refresh();
+
                 this.set('files', data.Contents.map((file) => {
                     file.LastModified = moment(file.LastModified).format('HH:mm:ss DD-MM-YYYY');
                     return file;
                 }));
             },
 
-            _checkSelectedFile: function(selectedFiles) {
+            _checkSelectedFile: function (selectedFiles) {
                 return !selectedFiles || selectedFiles.length === 0;
             },
 
-            _downloadFile: function() {
-                
+            _downloadFile: function () {
+                var link = document.createElement('a');
+                link.setAttribute('target', '_blank');
+                link.style.display = 'none';
+                document.body.appendChild(link);
+
+                this._selectedFiles.forEach((file) => {
+                    var url = `/api/buckets/${this.selectedBlobStore.bucketName}/files/${file.Key}`;
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', file.Key);
+                    link.click();
+                });
+
+                document.body.removeChild(link);
+            },
+
+            _confirmDelete: function () {
+                this.$.confirmDeleteDialog.modalButtonClicked();
+            },
+
+            _deleteFile: function () {
+                this._selectedFiles.forEach((file) => {
+                    this.$.deleteFileRequest.url =
+                        `/api/buckets/${this.selectedBlobStore.bucketName}/files/${file.Key}`;
+                    this.$.deleteFileRequest.generateRequest();
+                });
+            },
+
+            _handleDeleteFileResponse: function (e) {
+                this.$.getFileRequest.url = `/api/buckets/${this.selectedBlobStore.bucketName}/files`;
+                this.$.getFileRequest.generateRequest();
             }
         });
     </script>

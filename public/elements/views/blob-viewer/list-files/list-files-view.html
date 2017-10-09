@@ -22,10 +22,10 @@
 
         </style>
         <px-data-table table-data='{{files}}' id="listFileTable" language="en" filterable selectable on-selected-rows-changed="selectedChange">
-            <px-data-table-column name='Key' label="Name"></px-data-table-column>
-            <px-data-table-column name='LastModified' label="Last Modified"></px-data-table-column>
-            <px-data-table-column name='Size' label="Size (KB)"></px-data-table-column>
-            <px-data-table-column name='StorageClass' label="Storage Class"></px-data-table-column>
+            <px-data-table-column filterable name='Key' label="Name"></px-data-table-column>
+            <px-data-table-column filterable name='LastModified' label="Last Modified"></px-data-table-column>
+            <px-data-table-column filterable name='Size' label="Size (Byte)"></px-data-table-column>
+            <px-data-table-column filterable name='StorageClass' label="Storage Class"></px-data-table-column>
         </px-data-table>
     </template>
     <script>
