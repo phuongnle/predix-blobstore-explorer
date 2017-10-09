@@ -5,6 +5,7 @@
 <link rel="import" href="../../../../bower_components/px-theme/px-theme-styles.html">
 <link rel="import" href="../../../../bower_components/px-file-upload/px-file-upload.html">
 <link rel="import" href="../../../../bower_components/px-spinner/px-spinner.html">
+<link rel="import" href="../../../../bower_components/px-dropdown/px-dropdown.html">
 
 <script src="../../../../bower_components/moment/min/moment.min.js"></script>
 
@@ -44,13 +45,17 @@
         <iron-ajax id="uploadRequest" url='/getFiles'></iron-ajax>
 
         <template is="dom-repeat" items="{{selectedFiles}}">
-            <iron-ajax id="{{item.id}}" loading="{{item.uploading}}" url='/getFiles'></iron-ajax>
+            <iron-ajax id="{{item.id}}" method="POST" loading="{{item.uploading}}" url='/getFiles'></iron-ajax>
         </template>
 
         <div class="file-upload-container flex flex--col flex--justify flex--stretch">
             <div class="upload-area flex flex--col flex--left flex--stretch">
 
                 <template is="dom-if" if="{{!uploadingMode}}">
+                    <px-dropdown style="margin: 0px 10px 16px;" id="storesDropdown" items="{{blobStores}}" selected="{{selectedBlob}}"
+                        sort-mode="key" button-style="default" display-value="Select blob store" disable-clear>
+                    </px-dropdown>
+
                     <px-file-upload id="fileUpload" multiple message="Drag and drop files here, or click the button below.">
                     </px-file-upload>
                 </template>
@@ -95,6 +100,14 @@
 
                 selectedFiles: {
                     type: Array
+                },
+
+                blobStores: {
+                    type: Array
+                },
+
+                selectedBlob: {
+                    type: Object
                 }
             },
 
@@ -126,6 +139,12 @@
 
                 this.selectedFiles.forEach((file) => {
                     setTimeout(function () {
+                        var formData = new FormData();
+                        formData.append('file', file);
+                        var fileName = `${(new Date()).getTime()}-${file.name}`;
+
+                        this.$$(`#${file.id}`).url = `/api/blob/${fileName}`;
+                        this.$$(`#${file.id}`).body = formData;
                         this.$$(`#${file.id}`).generateRequest();
                     }.bind(this), 0)
                 });

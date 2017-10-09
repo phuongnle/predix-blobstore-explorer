@@ -13,10 +13,10 @@
     <template>
         <style include="px-theme-styles" is="theme-style"></style>
         <style include="blob-viewer-view-styles">
-            :host {
+             :host {
                 background-color: #ebeff2;
             }
-            
+
             .custom-icon {
                 --iron-icon-width: 26px;
                 --iron-icon-height: 26px;
@@ -35,9 +35,15 @@
             .header {
                 background-color: #23343f;
             }
+
+            .card-header {
+                padding: 1.33333rem 2rem 2rem;
+                border-bottom: 1px solid;
+            }
         </style>
 
-        <iron-ajax url='/getFiles' last-response="{{files}}" auto></iron-ajax>
+        <iron-ajax url='/getBlobStore' on-response="{{files}}"></iron-ajax>
+        <iron-ajax url='/getFiles' on-response="{{files}}"></iron-ajax>
 
         <!-- Header -->
         <div class="header flex flex--row flex--justify flex--middle">
@@ -61,25 +67,32 @@
         <!-- Main view -->
         <div class="flex flex--row flex--justify flex--stretch">
             <div class="u-3/4-desk u-1/1-palm">
-                <px-card id="files-card" header-text="Store 1" icon="px-obj:database" style="padding-bottom: 2rem">
+                <div class="card-header flex flex--row flex--justify flex--middle">
+                    <px-dropdown id="storesDropdown" items="{{blobStores}}" selected="{{selectedBlobStore}}"
+                        sort-mode="key" button-style="default" display-value="Select blob store" disable-clear>
+                    </px-dropdown>
                     <div class='actions'>
-                        <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:zoom'>
-                        </px-icon>
-                        <px-icon class="action-btn u-pl" icon='px-utl:download'>
-                        </px-icon>
-                        <px-icon class="action-btn u-pl" icon='px-utl:delete'>
-                        </px-icon>
+                        <button class="btn btn--bare btn--icon">
+                            <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:zoom'></px-icon>
+                        </button>
+                        <button class="btn btn--bare btn--icon">
+                            <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:download'></px-icon>
+                        </button>
+                        <button class="btn btn--bare btn--icon">
+                            <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:delete'></px-icon>
+                        </button>
                     </div>
-                    <div style="max-height: calc(100vh - 190px); overflow-y: auto;">
-                        <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'list')}}">
-                            <list-files-view id="listView" files="[[files]]" on-selected-files="_selectedFileChanged"></list-files-view>
-                        </template>
+                </div>
 
-                        <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'grid')}}">
-                            <grid-files-view id="gridView" files="[[files]]" on-selected-files="_selectedFileChanged"></grid-files-view>
-                        </template>
-                    </div>
-                </px-card>
+                <div style="max-height: calc(100vh - 190px); overflow-y: auto; padding: 2rem;">
+                    <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'list')}}">
+                        <list-files-view id="listView" files="[[files]]" on-selected-files="_selectedFileChanged"></list-files-view>
+                    </template>
+
+                    <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'grid')}}">
+                        <grid-files-view id="gridView" files="[[files]]" on-selected-files="_selectedFileChanged"></grid-files-view>
+                    </template>
+                </div>
 
             </div>
             <div style="border-right: 1px solid;"></div>
@@ -90,11 +103,11 @@
 
 
 
-            <!-- Upload Modal -->
-            <px-modal id="uploadModal" modal-heading="Upload Files">
-                <upload-file on-close="_toggleUploadModal" on-upload-submit=""></upload-file>
-            </px-modal>
-            <!-- End upload Modal -->
+        <!-- Upload Modal -->
+        <px-modal id="uploadModal" modal-heading="Upload Files">
+            <upload-file blob-stores="[[blobStores]]" selected-blob="[[selectedBlobStore]]" on-close="_toggleUploadModal" on-upload-submit=""></upload-file>
+        </px-modal>
+        <!-- End upload Modal -->
         <!-- End main view -->
 
     </template>
@@ -102,6 +115,27 @@
         Polymer({
             is: 'blob-viewer-view',
             properties: {
+                blobStores: {
+                    type: Array,
+                    value: [{
+                        "val": "predix_blobstore_lab",
+                        "key": {
+                            "name": "predix_blobstore_lab",
+                            "bucketName": "bucket-8fc5a126-507e-483e-acf1-230d8026c8f9"
+                        }
+                    }, {
+                        "val": "predix_blobstore_drone_dev",
+                        "key": {
+                            "name": "predix_blobstore_drone_dev",
+                            "bucketName": "bucket-2eb942ec-4611-4b48-832f-14820ea6c993"
+                        }
+                    }]
+                },
+
+                selectedBlobStore: {
+                    type: Object
+                },
+
                 files: {
                     type: Array
                 },
@@ -132,7 +166,7 @@
                 }
             },
 
-            observers: [],
+            observers: ['_selectedBlobChange(selectedBlobStore)'],
 
             ready: function () {},
 
@@ -160,6 +194,10 @@
             _toggleUploadModal: function () {
                 this.$.uploadModal.modalButtonClicked();
             },
+
+            _selectedBlobChange: function(selectedBlob) {
+
+            }
         });
     </script>
 </dom-module>

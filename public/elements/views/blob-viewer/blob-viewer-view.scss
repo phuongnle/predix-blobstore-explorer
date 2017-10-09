@@ -11,6 +11,8 @@
 
 // Objects
 $inuit-enable-btn--call-to-action : true;
+$inuit-enable-btn--bare : true;
+$inuit-enable-btn--icon : true;
 @import 'px-buttons-design/_objects.buttons.scss';
 
 :host {
