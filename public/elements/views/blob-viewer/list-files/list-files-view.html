@@ -19,10 +19,13 @@
 <dom-module id="list-files-view">
     <template>
         <style include="px-theme-styles" is="custom-style">
-            
+
         </style>
-        <px-data-table table-data='{{files}}' id="listFileTable"
-            language="en" filterable include-all-columns selectable on-selected-rows-changed="selectedChange">
+        <px-data-table table-data='{{files}}' id="listFileTable" language="en" filterable selectable on-selected-rows-changed="selectedChange">
+            <px-data-table-column name='Key' label="Name"></px-data-table-column>
+            <px-data-table-column name='LastModified' label="Last Modified"></px-data-table-column>
+            <px-data-table-column name='Size' label="Size (KB)"></px-data-table-column>
+            <px-data-table-column name='StorageClass' label="Storage Class"></px-data-table-column>
         </px-data-table>
     </template>
     <script>
@@ -40,18 +43,22 @@
 
             observers: [],
 
-            refresh: function() {
+            refresh: function () {
                 this._resetSelection();
             },
 
-            selectedChange: function(e){
+            selectedChange: function (e) {
                 var selected = e.detail.value.indexSplices;
                 if (!selected) return;
 
-                this.fire('selected-files', {selected: selected[0].object.map((item) => {return this.files[item.row.dataIndex];})});
+                this.fire('selected-files', {
+                    selected: selected[0].object.map((item) => {
+                        return this.files[item.row.dataIndex];
+                    })
+                });
             },
 
-            _resetSelection: function() {
+            _resetSelection: function () {
                 this.$.listFileTable.singleSelect = true;
                 this.$.listFileTable.singleSelect = false;
             }

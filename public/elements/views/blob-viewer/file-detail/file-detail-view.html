@@ -16,15 +16,19 @@
         <px-card header-text="Information" icon="px-fea:log" style="padding-bottom: 2rem; height: 100%;">
             <template is="dom-if" if="{{_checkSelectedLength(selectedFiles, '==1')}}">
                 <label for="input1" >File Name</label>
-                <div>{{selectedFiles.0.name}}</div>
+                <div>{{selectedFiles.0.Key}}</div>
                 <br/>
 
-                <label for="input1" >Extension</label>
-                <div>{{selectedFiles.0.extension}}</div>
+                <label for="input1" >E Tag</label>
+                <div>{{selectedFiles.0.ETag}}</div>
                 <br/>
 
                 <label for="input1" >File Size</label>
-                <div>{{selectedFiles.0.size}}</div>
+                <div>{{selectedFiles.0.Size}} KB</div>
+                <br/>
+
+                <label for="input1" >Storage Class</label>
+                <div>{{selectedFiles.0.StorageClass}}</div>
                 <br/>
             </template>
 

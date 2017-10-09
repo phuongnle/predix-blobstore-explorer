@@ -143,7 +143,9 @@
                         formData.append('file', file);
                         var fileName = `${(new Date()).getTime()}-${file.name}`;
 
-                        this.$$(`#${file.id}`).url = `/api/blob/${fileName}`;
+                        var uploadUrl = `/api/buckets/${this.selectedBlob.bucketName}/files/${fileName}`;
+
+                        this.$$(`#${file.id}`).url = uploadUrl;
                         this.$$(`#${file.id}`).body = formData;
                         this.$$(`#${file.id}`).generateRequest();
                     }.bind(this), 0)

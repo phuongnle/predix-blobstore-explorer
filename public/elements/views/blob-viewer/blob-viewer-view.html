@@ -42,8 +42,8 @@
             }
         </style>
 
-        <iron-ajax url='/getBlobStore' on-response="{{files}}"></iron-ajax>
-        <iron-ajax url='/getFiles' on-response="{{files}}"></iron-ajax>
+        <iron-ajax url='/api/blobstores' auto on-response="_handleBlobResponse"></iron-ajax>
+        <iron-ajax id="getFileRequest" on-response="_handleFileResponse"></iron-ajax>
 
         <!-- Header -->
         <div class="header flex flex--row flex--justify flex--middle">
@@ -75,11 +75,11 @@
                         <button class="btn btn--bare btn--icon">
                             <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:zoom'></px-icon>
                         </button>
-                        <button class="btn btn--bare btn--icon">
-                            <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:download'></px-icon>
+                        <button class="btn btn--bare btn--icon" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="_downloadFile">
+                            <px-icon class="action-btn u-pl" icon='px-utl:px-utl:download'></px-icon>
                         </button>
-                        <button class="btn btn--bare btn--icon">
-                            <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:delete'></px-icon>
+                        <button class="btn btn--bare btn--icon" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="deleteFile">
+                            <px-icon class="action-btn u-pl" icon='px-utl:px-utl:delete'></px-icon>
                         </button>
                     </div>
                 </div>
@@ -116,20 +116,7 @@
             is: 'blob-viewer-view',
             properties: {
                 blobStores: {
-                    type: Array,
-                    value: [{
-                        "val": "predix_blobstore_lab",
-                        "key": {
-                            "name": "predix_blobstore_lab",
-                            "bucketName": "bucket-8fc5a126-507e-483e-acf1-230d8026c8f9"
-                        }
-                    }, {
-                        "val": "predix_blobstore_drone_dev",
-                        "key": {
-                            "name": "predix_blobstore_drone_dev",
-                            "bucketName": "bucket-2eb942ec-4611-4b48-832f-14820ea6c993"
-                        }
-                    }]
+                    type: Array
                 },
 
                 selectedBlobStore: {
@@ -195,8 +182,37 @@
                 this.$.uploadModal.modalButtonClicked();
             },
 
-            _selectedBlobChange: function(selectedBlob) {
+            _selectedBlobChange: function(newVal, oldVal) {
+                if (!newVal) return;
 
+                this.$.getFileRequest.url = `/api/buckets/${this.selectedBlobStore.bucketName}/files`;
+                this.$.getFileRequest.generateRequest();
+            },
+
+            _handleBlobResponse: function(res) {
+                var stores = res.detail.response;
+                this.set('blobStores', stores.map((store) => {
+                    return {
+                        val: store.name,
+                        key: store
+                    }
+                }));
+            },
+
+            _handleFileResponse: function(res) {
+                var data = res.detail.response;
+                this.set('files', data.Contents.map((file) => {
+                    file.LastModified = moment(file.LastModified).format('HH:mm:ss DD-MM-YYYY');
+                    return file;
+                }));
+            },
+
+            _checkSelectedFile: function(selectedFiles) {
+                return !selectedFiles || selectedFiles.length === 0;
+            },
+
+            _downloadFile: function() {
+                
             }
         });
     </script>

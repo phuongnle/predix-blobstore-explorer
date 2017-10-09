@@ -46,9 +46,9 @@
                     this.selectedFiles.push(e.detail.item);
                     // this.push('selectedFiles', e.detail.item);
                 } else {
-                    this.set('selectedFiles', this.selectedFiles.filter((item) => {return item.name !== e.detail.item.name}));
+                    this.set('selectedFiles', this.selectedFiles.filter((item) => {return item.Key !== e.detail.item.Key}));
                 }
-
+                debugger
                 this.fire('selected-files', {selected: this.selectedFiles});
             },
 
