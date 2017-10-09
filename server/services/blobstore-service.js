@@ -21,14 +21,16 @@ function getClient(bucketName) {
 
     if (!bucket) return null;
 
-    console.log(bucket);
-
-    return new sdk.S3({
+    var s3Obj = {
         accessKeyId: bucket.credentials.access_key_id,
         secretAccessKey: bucket.credentials.secret_access_key,
         endpoint: bucket.credentials.host,
         signatureVersion: 'v4'
-    });
+    };
+
+    console.log(s3Obj);
+
+    return new sdk.S3(s3Obj);
 }
 
 

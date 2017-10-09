@@ -89,6 +89,8 @@ function execute(req, res, mainAction) {
         res.status(400).end();
         return;
     }
+
+    mainAction(req, res, client);
 }
 
 function handleResponse(req, res, err, data, successfulAction) {
