@@ -1,13 +1,9 @@
 {
-  "name": "predix-webapp-starter",
-  "version": "2.0.2",
+  "name": "predix-blobstore-explorer",
+  "version": "1.0.0",
   "private": true,
   "engines": {
     "node": ">=0.10.0"
-  },
-  "author": {
-    "name": "Predix Adoption",
-    "email": "predix.adoption@ge.com"
   },
   "scripts": {
     "start": "node server/app.js",
@@ -44,6 +40,7 @@
     "sinon": "^1.17.7"
   },
   "dependencies": {
+    "aws-sdk": "^2.130.0",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "connect-redis": "^3.2.0",
