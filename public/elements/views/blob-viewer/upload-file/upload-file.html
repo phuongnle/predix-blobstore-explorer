@@ -1,0 +1,137 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../../bower_components/px-icon-set/px-icon-set.html">
+<link rel="import" href="../../../../bower_components/px-icon-set/px-icon.html">
+<link rel="import" href="../../../../bower_components/px-theme/px-theme-styles.html">
+<link rel="import" href="../../../../bower_components/px-file-upload/px-file-upload.html">
+<link rel="import" href="../../../../bower_components/px-spinner/px-spinner.html">
+
+<script src="../../../../bower_components/moment/min/moment.min.js"></script>
+
+<link rel="import" href="upload-file-styles.html">
+
+<dom-module id="upload-file">
+    <template>
+        <style include="upload-file-styles" is="custom-style">
+            .action-bar {
+                margin: 50px 0 0;
+            }
+
+            .file-upload-container {
+                min-width: 600px;
+                min-height: 60vh;
+                /*padding: 32px 0 0;*/
+            }
+
+            .file-upload-container .upload-area {
+                height: 50vh;
+                overflow: auto;
+            }
+
+            .file-upload-container .upload-area #fileUpload {
+                max-height: 50vh;
+                overflow: auto;
+            }
+
+            .uploading-item {
+                padding: 16px;
+                border: 1px solid #d8e0e5;
+                margin: 6px 0;
+            }
+        </style>
+
+
+        <iron-ajax id="uploadRequest" url='/getFiles'></iron-ajax>
+
+        <template is="dom-repeat" items="{{selectedFiles}}">
+            <iron-ajax id="{{item.id}}" loading="{{item.uploading}}" url='/getFiles'></iron-ajax>
+        </template>
+
+        <div class="file-upload-container flex flex--col flex--justify flex--stretch">
+            <div class="upload-area flex flex--col flex--left flex--stretch">
+
+                <template is="dom-if" if="{{!uploadingMode}}">
+                    <px-file-upload id="fileUpload" multiple message="Drag and drop files here, or click the button below.">
+                    </px-file-upload>
+                </template>
+
+                <template is="dom-if" if="{{uploadingMode}}">
+                    <div>
+                        <template is="dom-repeat" items="{{selectedFiles}}">
+                            <div class="uploading-item flex flex--row flex--center">
+                                <div class="u-1/2">{{item.name}}</div>
+                                <div class="u-1/4">{{item.size}}KB</div>
+                                <div class="u-1/4 flex flex--row flex--center">
+                                    <template is="dom-if" if="{{item.uploading}}">
+                                        <px-spinner size="15">
+                                        </px-spinner><span style="margin-left: 6px;">Uploading...</span>
+                                    </template>
+                                    <template is="dom-if" if="{{!item.uploading}}">
+                                        <span style="margin-left: 6px;">Done</span>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+            </div>
+
+            <div class="action-bar flex flex--row flex--right">
+                <button on-click="_cancelUpload" class="btn btn--tertiary">Close</button>
+                <button on-click="_minimizeUpload" class="btn btn--call-to-action">Minimize</button>
+                <button on-click="_beginUpload" disabled$="{{uploadingMode}}" class="btn btn--primary">Upload</button>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'upload-file',
+            properties: {
+                uploadingMode: {
+                    type: Boolean,
+                    value: false
+                },
+
+                selectedFiles: {
+                    type: Array
+                }
+            },
+
+            observers: [],
+
+            refresh: function () {
+                this._resetSelection();
+            },
+
+            _minimizeUpload: function (e) {
+                this.fire('close');
+            },
+
+            _cancelUpload: function (e) {
+                this.$$('#fileUpload').files = [];
+                this.set('uploadingMode', false);
+                this.fire('close');
+            },
+
+            _beginUpload: function () {
+                this.selectedFiles = [];
+                this.set('selectedFiles', this.$$('#fileUpload').files.map((item, i) => {
+                    item.uploading = true;
+                    item.id = `uploadfileRequest${i}`;
+                    return item;
+                }));
+
+                this.set('uploadingMode', true);
+
+                this.selectedFiles.forEach((file) => {
+                    setTimeout(function () {
+                        this.$$(`#${file.id}`).generateRequest();
+                    }.bind(this), 0)
+                });
+
+            }
+
+        });
+    </script>
+</dom-module>

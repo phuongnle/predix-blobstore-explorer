@@ -34,7 +34,11 @@
     "px-breadcrumbs": "^1.0.5",
     "px-branding-bar": "^1.0.6",
     "px-key-value-pair": "^1.1.2",
-    "px-forms-design": "^2.0.6"
+    "px-forms-design": "^2.0.6",
+    "px-modal": "https://github.com/PredixDev/px-modal.git#^2.0.5",
+    "px-file-upload": "^1.0.5",
+    "px-progress-bar": "^1.0.3",
+    "px-spinner": "^2.1.0"
   },
   "devDependencies": {
     "px-theme": "^3.0.0",

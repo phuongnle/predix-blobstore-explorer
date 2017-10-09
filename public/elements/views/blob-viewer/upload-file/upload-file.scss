@@ -7,20 +7,12 @@
 @import 'px-flexbox-design/_base.flexbox.scss';
 @import "px-headings-design/_base.headings.scss";
 
-// Meta
-
-// Objects
+//Objects
+$inuit-enable-btn--primary : true;
 $inuit-enable-btn--call-to-action : true;
-@import 'px-buttons-design/_objects.buttons.scss';
-
-:host {
-    background: $gray16;
-}
-
-#refreshTableBtn {
-    margin-top: 4px;
-    cursor: pointer;
-}
+$inuit-enable-btn--tertiary : true;
+$inuit-enable-btn--disabled : true;
+@import "px-buttons-design/_objects.buttons.scss";
 
 // Trumps
 $inuit-enable-paddings : true;

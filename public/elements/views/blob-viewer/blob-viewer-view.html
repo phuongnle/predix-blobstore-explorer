@@ -1,16 +1,22 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../../bower_components/px-dropdown/px-dropdown.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/px-dropdown/px-dropdown.html">
+<link rel="import" href="../../../bower_components/px-modal/px-modal.html">
 <link rel="import" href="./list-files/list-files-view.html">
 <link rel="import" href="./grid-files/grid-files-view.html">
 <link rel="import" href="./file-detail/file-detail-view.html">
+<link rel="import" href="./upload-file/upload-file.html">
 <link rel="import" href="blob-viewer-view-styles.html">
-<link rel="import" href="../../../../bower_components/px-theme/px-theme-styles.html">
+<link rel="import" href="../../../bower_components/px-theme/px-theme-styles.html">
 
 <dom-module id="blob-viewer-view">
     <template>
         <style include="px-theme-styles" is="theme-style"></style>
         <style include="blob-viewer-view-styles">
+            :host {
+                background-color: #ebeff2;
+            }
+            
             .custom-icon {
                 --iron-icon-width: 26px;
                 --iron-icon-height: 26px;
@@ -25,17 +31,22 @@
             .active-toggle {
                 color: #3ab4d4;
             }
+
+            .header {
+                background-color: #23343f;
+            }
         </style>
 
         <iron-ajax url='/getFiles' last-response="{{files}}" auto></iron-ajax>
 
-        <div class="flex flex--row flex--justify flex--middle">
+        <!-- Header -->
+        <div class="header flex flex--row flex--justify flex--middle">
             <div>
                 <h1 class="delta u-pl++">Blob Viewer</h1>
             </div>
             <div>
                 <div class="flex flex--row flex--right">
-                    <button class="btn btn--call-to-action" style="margin: 0 32px;">
+                    <button on-click="_toggleUploadModal" class="btn btn--call-to-action" style="margin: 0 32px;">
                         <px-icon style="--iron-icon-height:16px" icon="px-utl:upload"></px-icon> Upload
                     </button>
 
@@ -45,7 +56,9 @@
                 </div>
             </div>
         </div>
+        <!-- End Header -->
 
+        <!-- Main view -->
         <div class="flex flex--row flex--justify flex--stretch">
             <div class="u-3/4-desk u-1/1-palm">
                 <px-card id="files-card" header-text="Store 1" icon="px-obj:database" style="padding-bottom: 2rem">
@@ -74,6 +87,16 @@
                 <file-detail-view selected-files="{{_selectedFiles}}"></file-detail-view>
             </div>
         </div>
+
+
+
+            <!-- Upload Modal -->
+            <px-modal id="uploadModal" modal-heading="Upload Files">
+                <upload-file on-close="_toggleUploadModal" on-upload-submit=""></upload-file>
+            </px-modal>
+            <!-- End upload Modal -->
+        <!-- End main view -->
+
     </template>
     <script>
         Polymer({
@@ -109,13 +132,13 @@
                 }
             },
 
-            observers: ['test(_selectedFiles)'],
+            observers: [],
 
             ready: function () {},
 
             _selectViewMode: function (e) {
                 this.set('_selectedFiles', []);
-                
+
                 this.set('_activeViewMode', e.model.item.type);
 
                 this.$$(`#${e.model.item.type}View`) && this.$$(`#${e.model.item.type}View`).refresh();
@@ -134,9 +157,9 @@
                 this.set('_selectedFiles', e.detail.selected);
             },
 
-            test: function() {
-                // console.log(this._selectedFiles);
-            }
+            _toggleUploadModal: function () {
+                this.$.uploadModal.modalButtonClicked();
+            },
         });
     </script>
 </dom-module>
