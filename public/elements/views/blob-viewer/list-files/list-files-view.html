@@ -21,7 +21,7 @@
         <style include="px-theme-styles" is="custom-style">
 
         </style>
-        <px-data-table table-data='{{files}}' id="listFileTable" language="en" filterable selectable on-selected-rows-changed="selectedChange">
+        <px-data-table table-data='{{files}}' id="listFileTable" language="en" filterable single-select="{{multipleSelect}}" on-selected-rows-changed="selectedChange">
             <px-data-table-column filterable name='Key' label="Name"></px-data-table-column>
             <px-data-table-column filterable name='LastModified' label="Last Modified"></px-data-table-column>
             <px-data-table-column filterable name='Size' label="Size (Byte)"></px-data-table-column>
@@ -38,13 +38,16 @@
 
                 selectedFiles: {
                     type: Array
+                },
+
+                multipleSelect: {
+                    type: Boolean
                 }
             },
 
-            observers: [],
+            observers: ['test(multipleSelect)'],
 
             refresh: function () {
-                debugger
                 this._resetSelection();
             },
 
@@ -62,6 +65,10 @@
             _resetSelection: function () {
                 this.$.listFileTable.singleSelect = true;
                 this.$.listFileTable.singleSelect = false;
+            },
+
+            test: function(newVal, oldVal) {
+                debugger
             }
 
         });

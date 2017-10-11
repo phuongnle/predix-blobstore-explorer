@@ -2,10 +2,12 @@
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../../bower_components/px-dropdown/px-dropdown.html">
 <link rel="import" href="../../../bower_components/px-modal/px-modal.html">
+<link rel="import" href="../../../bower_components/px-toggle/px-toggle.html">
 <link rel="import" href="./list-files/list-files-view.html">
 <link rel="import" href="./grid-files/grid-files-view.html">
 <link rel="import" href="./file-detail/file-detail-view.html">
 <link rel="import" href="./upload-file/upload-file.html">
+<link rel="import" href="../../ge-svg-logo/ge-svg-logo.html">
 <link rel="import" href="blob-viewer-view-styles.html">
 <link rel="import" href="../../../bower_components/px-theme/px-theme-styles.html">
 
@@ -23,7 +25,11 @@
                 cursor: pointer;
             }
 
-            .action-btn {
+            .action-btn[disabled] {
+                color: rgba(136, 154, 165, 0.5);
+            }
+
+            .action-btn px-icon {
                 --iron-icon-width: 22px;
                 --iron-icon-height: 22px;
             }
@@ -49,7 +55,8 @@
         <!-- Header -->
         <div class="header flex flex--row flex--justify flex--middle">
             <div>
-                <h1 class="delta u-pl++">Blob Viewer</h1>
+                <h1 class="delta u-pl++">
+                    <ge-svg-logo></ge-svg-logo> Blob Store Explore</h1>
             </div>
             <div>
                 <div class="flex flex--row flex--right">
@@ -72,26 +79,28 @@
                     <px-dropdown id="storesDropdown" items="{{blobStores}}" selected="{{selectedBlobStore}}" sort-mode="key" button-style="default"
                         display-value="Select blob store" disable-clear>
                     </px-dropdown>
-                    <div class='actions'>
-                        <button class="btn btn--bare btn--icon">
-                            <px-icon class="action-btn u-pl" on-click="test" icon='px-utl:px-utl:zoom'></px-icon>
+                    <div class='actions flex flex--row flex--justify flex--middle'>
+                        <button class="btn btn--bare btn--icon action-btn">
+                            <px-icon class="u-pl" on-click="test" icon='px-utl:px-utl:zoom'></px-icon>
                         </button>
-                        <button class="btn btn--bare btn--icon" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="_downloadFile">
-                            <px-icon class="action-btn u-pl" icon='px-utl:px-utl:download'></px-icon>
+                        <px-toggle size="regular" toggles="{{_isMultiSelect}}" style="margin: 0 6px 0 25px;">
+                        </px-toggle>
+                        <button class="btn btn--bare btn--icon action-btn" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="_downloadFile">
+                            <px-icon class="u-pl" icon='px-utl:px-utl:download'></px-icon>
                         </button>
-                        <button class="btn btn--bare btn--icon" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="_confirmDelete">
-                            <px-icon class="action-btn u-pl" icon='px-utl:px-utl:delete'></px-icon>
+                        <button class="btn btn--bare btn--icon action-btn" disabled$="{{_checkSelectedFile(_selectedFiles)}}" on-click="_confirmDelete">
+                            <px-icon class="u-pl" icon='px-utl:px-utl:delete'></px-icon>
                         </button>
                     </div>
                 </div>
 
                 <div style="max-height: calc(100vh - 190px); overflow-y: auto; padding: 2rem;">
                     <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'list')}}">
-                        <list-files-view id="listView" files="[[files]]" on-selected-files="_selectedFileChanged"></list-files-view>
+                        <list-files-view id="listView" files="[[files]]" multiple-select="[[_isMultiSelect]]" on-selected-files="_selectedFileChanged"></list-files-view>
                     </template>
 
                     <template is="dom-if" if="{{_displayViewMode(_activeViewMode, 'grid')}}">
-                        <grid-files-view id="gridView" files="[[files]]" on-selected-files="_selectedFileChanged"></grid-files-view>
+                        <grid-files-view id="gridView" files="[[files]]" multiple-select="[[_isMultiSelect]]" on-selected-files="_selectedFileChanged"></grid-files-view>
                     </template>
                 </div>
 
@@ -158,6 +167,11 @@
                 _activeViewMode: {
                     type: String,
                     value: 'list'
+                },
+
+                _isMultiSelect: {
+                    type: Boolean,
+                    value: false
                 }
             },
 

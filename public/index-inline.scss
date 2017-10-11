@@ -21,6 +21,7 @@ $inuit-webfont-path: "/bower_components/px-typography-design/type";
 html {
   position: relative;
   min-height: 100%;
+  background-color: #ebeff2 !important;
 }
 body {
   margin-bottom: calculateRem(60px);
