@@ -225,6 +225,7 @@
 
                 this.set('files', data.Contents.map((file) => {
                     file.LastModified = moment(file.LastModified).format('HH:mm:ss DD-MM-YYYY');
+                    file.id = file.ETag.slice(1, -1);
                     return file;
                 }));
             },
